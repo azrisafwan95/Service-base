@@ -1,81 +1,46 @@
-import { useEffect, useState } from 'react';
 import { 
-  Navbar, 
-  Hero, 
-  TrustBar, 
-  Services, 
-  WhyChooseUs, 
-  Testimonials, 
-  Pricing, 
-  FinalCta, 
-  Footer, 
-  WhatsAppFloat 
+  Navbar, Hero, TrustBar, Services, WhyChooseUs, 
+  Testimonials, Pricing, FinalCta, Footer, WhatsAppFloat 
 } from './components';
 import { ALL_PRESETS } from './data/presets/index';
 
 export default function App() {
-  // 1. Baca niche dari URL (?niche=lori)
   const queryParams = new URLSearchParams(window.location.search);
   const nicheQuery = queryParams.get('niche') || 'aircond';
-
-  // 2. Pilih data berdasarkan niche (fallback ke aircond)
   const content = ALL_PRESETS[nicheQuery] || ALL_PRESETS.aircond;
 
-  // 3. (Optional) Log untuk debug di phone
-  console.log("Niche Aktif:", nicheQuery);
+  // Debugging: Tengok kat console phone kalau boleh
+  console.log("Content data:", content);
+
+  // Jika content gagal load, tunjuk mesej error simple
+  if (!content) return <div className="p-10 text-red-500">Data untuk niche "{nicheQuery}" tidak dijumpai!</div>;
 
   return (
     <div className="font-sans antialiased">
       {/* 
-        Setiap komponen di bawah menerima data spesifik dari 'content'.
-        Pastikan dalam setiap fail komponen (cth: Hero.tsx), 
-        anda sudah tukar kepada props-based (seperti yang kita buat tadi).
+         Guna Short-circuiting (&&) supaya kalau data tak ada, 
+         dia tak render komponen tu (elak blank putih)
       */}
       
-      <Navbar brand={content.BRAND} items={content.NAV_ITEMS} />
+      {content.BRAND && <Navbar brand={content.BRAND} items={content.NAV_ITEMS} />}
       
-      <Hero 
-        data={content.HERO} 
-        contact={content.CONTACT} 
-      />
+      {content.HERO && <Hero data={content.HERO} contact={content.CONTACT} />}
       
-      <TrustBar 
-        text={content.TRUST_BAR_TEXT} 
-        stats={content.TRUST_STATS} 
-      />
+      {content.TRUST_BAR_TEXT && <TrustBar text={content.TRUST_BAR_TEXT} stats={content.TRUST_STATS} />}
       
-      <Services 
-        data={content.SERVICES} 
-        cards={content.SERVICE_CARDS} 
-        contact={content.CONTACT}
-      />
+      {content.SERVICES && (
+        <Services 
+          data={content.SERVICES} 
+          cards={content.SERVICE_CARDS} 
+          contact={content.CONTACT}
+        />
+      )}
 
-      <WhyChooseUs 
-        data={content.WHY_US} 
-        features={content.WHY_US_FEATURES} 
-      />
+      {/* Cuba render 4 komponen atas ni dulu */}
       
-      <Testimonials 
-        data={content.TESTIMONIALS} 
-        cards={content.TESTIMONIAL_CARDS} 
-      />
+      {content.FINAL_CTA && <FinalCta data={content.FINAL_CTA} contact={content.CONTACT} />}
       
-      <Pricing 
-        data={content.PRICING} 
-        packages={content.PRICING_PACKAGES} 
-      />
-      
-      <FinalCta 
-        data={content.FINAL_CTA} 
-        contact={content.CONTACT} 
-      />
-      
-      <Footer 
-        footer={content.FOOTER} 
-        links={content.FOOTER_LINKS} 
-        contact={content.FOOTER_CONTACT} 
-        brand={content.BRAND}
-      />
+      <Footer brand={content.BRAND} contact={content.CONTACT} />
       
       <WhatsAppFloat contact={content.CONTACT} />
     </div>
