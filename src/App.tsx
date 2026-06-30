@@ -5,22 +5,44 @@ import {
 import { ALL_PRESETS } from './data/presets/index';
 
 export default function App() {
+  // Ambil niche dari URL (?niche=lori)
   const queryParams = new URLSearchParams(window.location.search);
   const nicheQuery = queryParams.get('niche') || 'aircond';
+  
+  // Pilih data (fallback ke aircond)
   const content = ALL_PRESETS[nicheQuery] || ALL_PRESETS.aircond;
 
+  // Jika data content tak jumpa langsung
+  if (!content) {
+    return <div className="p-20 text-center">Data niche tidak dijumpai.</div>;
+  }
+
   return (
-    <div className="font-sans antialiased">
-      <Navbar brand={content.BRAND} contact={content.CONTACT} items={content.NAV_ITEMS} theme={content.THEME} />
+    <div className="font-sans antialiased bg-white">
+      {/* 
+        Kita buang terus HelmetProvider dan Helmet.
+        Website akan guna title asal dari index.html buat sementara waktu.
+      */}
+      
+      <Navbar brand={content.BRAND} contact={content.CONTACT} items={content.NAV_ITEMS || []} theme={content.THEME} />
+      
       <Hero data={content.HERO} contact={content.CONTACT} theme={content.THEME} />
-      <TrustBar text={content.TRUST_BAR_TEXT} stats={content.TRUST_STATS} />
-      <Services data={content.SERVICES} cards={content.SERVICE_CARDS} contact={content.CONTACT} theme={content.THEME} />
-      <WhyChooseUs data={content.WHY_US} features={content.WHY_US_FEATURES} />
-      <Testimonials data={content.TESTIMONIALS} cards={content.TESTIMONIAL_CARDS} />
-      <Pricing data={content.PRICING} packages={content.PRICING_PACKAGES} contact={content.CONTACT} />
+      
+      <TrustBar text={content.TRUST_BAR_TEXT} stats={content.TRUST_STATS || []} />
+      
+      <Services data={content.SERVICES} cards={content.SERVICE_CARDS || []} contact={content.CONTACT} theme={content.THEME} />
+
+      <WhyChooseUs data={content.WHY_US} features={content.WHY_US_FEATURES || []} />
+      
+      <Testimonials data={content.TESTIMONIALS} cards={content.TESTIMONIAL_CARDS || []} />
+      
+      <Pricing data={content.PRICING} packages={content.PRICING_PACKAGES || []} contact={content.CONTACT} />
+      
       <FinalCta data={content.FINAL_CTA} contact={content.CONTACT} theme={content.THEME} />
-      <Footer brand={content.BRAND} footer={content.FOOTER} links={content.FOOTER_LINKS} contact={content.FOOTER_CONTACT} />
-      <WhatsAppFloat phone={content.CONTACT.whatsappNumber} />
+      
+      <Footer brand={content.BRAND} footer={content.FOOTER} links={content.FOOTER_LINKS || []} contact={content.FOOTER_CONTACT || []} />
+      
+      <WhatsAppFloat phone={content.CONTACT?.whatsappNumber} />
     </div>
   );
 }
