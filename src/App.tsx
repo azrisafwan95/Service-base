@@ -9,40 +9,54 @@ export default function App() {
   const nicheQuery = queryParams.get('niche') || 'aircond';
   const content = ALL_PRESETS[nicheQuery] || ALL_PRESETS.aircond;
 
-  // Debugging: Tengok kat console phone kalau boleh
-  console.log("Content data:", content);
-
-  // Jika content gagal load, tunjuk mesej error simple
-  if (!content) return <div className="p-10 text-red-500">Data untuk niche "{nicheQuery}" tidak dijumpai!</div>;
+  if (!content) return <div className="p-20 text-center">Data tidak dijumpai.</div>;
 
   return (
     <div className="font-sans antialiased">
-      {/* 
-         Guna Short-circuiting (&&) supaya kalau data tak ada, 
-         dia tak render komponen tu (elak blank putih)
-      */}
+      {/* Guna optional chaining (?.) dan short-circuit (&&) untuk keselamatan */}
       
-      {content.BRAND && <Navbar brand={content.BRAND} items={content.NAV_ITEMS} />}
+      {content.BRAND && (
+        <Navbar brand={content.BRAND} items={content.NAV_ITEMS || []} />
+      )}
       
-      {content.HERO && <Hero data={content.HERO} contact={content.CONTACT} />}
+      {content.HERO && (
+        <Hero data={content.HERO} contact={content.CONTACT} />
+      )}
       
-      {content.TRUST_BAR_TEXT && <TrustBar text={content.TRUST_BAR_TEXT} stats={content.TRUST_STATS} />}
+      {content.TRUST_BAR_TEXT && (
+        <TrustBar text={content.TRUST_BAR_TEXT} stats={content.TRUST_STATS || []} />
+      )}
       
       {content.SERVICES && (
-        <Services 
-          data={content.SERVICES} 
-          cards={content.SERVICE_CARDS} 
-          contact={content.CONTACT}
-        />
+        <Services data={content.SERVICES} cards={content.SERVICE_CARDS || []} contact={content.CONTACT} />
       )}
 
-      {/* Cuba render 4 komponen atas ni dulu */}
+      {content.WHY_US && (
+        <WhyChooseUs data={content.WHY_US} features={content.WHY_US_FEATURES || []} />
+      )}
       
-      {content.FINAL_CTA && <FinalCta data={content.FINAL_CTA} contact={content.CONTACT} />}
+      {content.TESTIMONIALS && (
+        <Testimonials data={content.TESTIMONIALS} cards={content.TESTIMONIAL_CARDS || []} />
+      )}
       
-      <Footer brand={content.BRAND} contact={content.CONTACT} />
+      {content.PRICING && (
+        <Pricing data={content.PRICING} packages={content.PRICING_PACKAGES || []} />
+      )}
       
-      <WhatsAppFloat contact={content.CONTACT} />
+      {content.FINAL_CTA && (
+        <FinalCta data={content.FINAL_CTA} contact={content.CONTACT} />
+      )}
+      
+      {content.FOOTER && (
+        <Footer 
+          footer={content.FOOTER} 
+          links={content.FOOTER_LINKS || []} 
+          contact={content.FOOTER_CONTACT || []} 
+          brand={content.BRAND}
+        />
+      )}
+      
+      {content.CONTACT && <WhatsAppFloat phone={content.CONTACT.whatsappNumber} />}
     </div>
   );
 }
